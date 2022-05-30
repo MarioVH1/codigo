@@ -1,0 +1,203 @@
+			BLOQUE ANONIMO
+
+SET SERVEROUTPUT ON
+DECLARE
+  v_fname varchar2(20);
+  BEGIN
+  select first_name INTO v_fname FROM employees
+ WHERE employee_id=100;
+  DBMS_OUTPUT.PUT_LINE('El nombre del empleado es' || v_fname);
+  END;
+  /
+
+
+			CREAR PROCEDIMIENTO
+
+SET SERVEROUTPUT ON
+CREATE OR REPLACE PROCEDURE Hola is
+  BEGIN
+  DBMS_OUTPUT.PUT_LINE('Clase de administración de Base de Datos' );
+  END;
+   /
+Execute Hola
+
+
+
+
+
+
+
+
+
+			BLOQUE ANIDADO
+SET SERVEROUTPUT ON
+ DECLARE
+   l_mensaje VARCHAR2(100) :='Clase de Administración';
+  BEGIN
+      DECLARE l_mensaje2 VARCHAR2(100) := l_mensaje || 'de Base de Datos';
+      BEGIN DBMS_OUTPUT.put_line(l_mensaje2);
+      END;
+  END;
+  /
+
+			PROCEDIMIENTO ANIDADO
+
+SET SERVEROUTPUT ON
+CREATE OR REPLACE PROCEDURE Hola is
+  l_mensaje VARCHAR2(100) := 'Clase de Administración';
+  BEGIN
+      DECLARE l_mensaje2 VARCHAR2(100) := l_mensaje || 'de Base de Datos';
+       BEGIN DBMS_OUTPUT.put_line(l_mensaje2);
+       END;
+  END;
+   /
+
+			
+
+
+
+
+
+
+
+PROCEDIMIENTO (VALORES EXTERNOS)
+
+CREATE OR REPLACE PROCEDURE hola_alumnos (student_in IN VARCHAR2) IS
+       l_mensaje VARCHAR2(100);
+    BEGIN
+       l_mensaje := '!Hola ' || student_in;
+       DBMS_OUTPUT.put_line(l_mensaje);
+    END hola_alumnos;
+    /
+
+BEGIN
+       hola_alumnos('Alumnos¡');
+       hola_alumnos('Clase¡');
+    END;
+    /
+
+		FUNCIONES(FUNCTIONS)
+CREATE OR REPLACE FUNCTION
+    hola_mensaje(lugar_in IN VARCHAR2) RETURN VARCHAR2 IS
+    BEGIN
+      RETURN '!Hola ' || lugar_in;
+    END hola_mensaje;
+    /
+
+		CREAR TABLAS
+CREATE TABLE libros(
+codigo number(3),
+titulo varchar2(40),
+autor varchar2(30),
+editorial varchar2(20),
+precio number(5,2) );
+
+
+insert into libros values (100,'Uno','Richard Bach','Planeta',15);
+insert into libros values (501,'Ilusiones','Richard Bach','Planeta',12);
+insert into libros values (105,'El aleph','Borges','Emece',25);
+insert into libros values (300,'Aprenda PHP','Mario Molina','Nuevo siglo',50);
+insert into libros values (102,'Matematica estas ahi','Paenza','Nuevo siglo',18);
+insert into libros values (502,'Puente al infinito','Bach Richard','Sudamericana',14);
+insert into libros values (503,'Antología','J. L. Borges','Paidos',24);
+insert into libros values (504,'Java en 10 minutos','Mario Molina','Siglo XXI',45);
+insert into libros values (505,'Cervantes y el quijote','Borges- Casares','Planeta',34);
+insert into libros values(109,'El experto en laberintos','Gaskin','Planeta',20);
+insert into libros values(204,'Alicia en el pais de las maravillas','Carroll','Emece',31);
+
+
+
+create or replace procedure pa_libros_aumentar10(aeditorial in varchar2)
+as
+begin
+update libros set precio=precio+(precio*0.1)
+where editorial=aeditorial;
+end;
+
+select titulo, editorial, precio from libros;
+execute pa_libros_aumentar10('Planeta');
+
+
+
+
+
+
+
+
+
+ENVIAMOS PARAMETROS
+create or replace procedure
+pa_libros_aumentar(aeditorial in varchar2,aporcentaje
+in number default 10)
+as
+begin
+update libros set
+precio=precio+(precio*aporcentaje/100)
+where editorial=aeditorial;
+end;
+execute pa_libros_aumentar('Planeta',30);
+execute pa_libros_aumentar('Paidos');
+
+
+
+create or replace procedure pa_libros_insertar
+(acodigo in number default null,atitulo in varchar2
+default null, aautor in varchar2 default 'desconocido',
+aeditorial in varchar2 default 'sin especificar', aprecio
+in number default 0)
+as
+begin
+insert into libros values
+(acodigo,atitulo,aautor,aeditorial,aprecio);
+end;
+
+
+
+
+
+
+create or replace function f_incremento10 (avalor
+number)
+return number
+is
+begin
+return avalor+(avalor*0.1);
+end;
+
+
+create or replace function f_incremento (avalor
+number, aincremento number)
+return number
+is
+begin
+return avalor+(avalor*aincremento/100);
+end;
+select titulo, precio, f_incremento(precio,20) from libros;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+create or replace function f_costoso (avalor number)
+return varchar2
+is
+valorretornado varchar2(20);
+begin
+valorretornado:='';
+if avalor<=20 then
+valorretornado:='economico';
+else valorretornado:='costoso';
+end if;
+return valorretornado;
+end;
+select titulo, precio, f_costoso(precio) from libros;
